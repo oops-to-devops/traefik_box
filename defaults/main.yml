@@ -6,6 +6,7 @@ traefik_perks_home: "/home/{{ box_deploy_user }}/perks"
 
 traefik_domain: traefik.local
 traefik_portainer_domain: portainer.traefik.local
+traefik_portainer_password: "test"
 
 traefik_operation_mode: local # swarm
 

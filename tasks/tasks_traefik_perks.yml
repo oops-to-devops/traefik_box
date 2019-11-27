@@ -42,9 +42,24 @@
       tags:
         - traefikbox
 
+    # The portainer admin passowrd is stored in a docker secret. If this ever
+    # changes, one needs ot manually remove the portainer service first.
+
+    - name: Portainer admin password secret
+      docker_secret:
+        name: portainer-crypted-password
+        data: "{{ traefik_portainer_password }}"
+      when: traefik_operation_mode == "swarm"
+      register: portainer_pass
+
+    - name: Portainer admin password secret
+      shell: echo "{{ traefik_portainer_password }}" > {{ traefik_perks_home }}/portainer/
+      no_log: true
+      when: traefik_operation_mode == "swarm"
+
     - name: TraefikBox | Template portainer definition
       template:
-        src: "templates/portainer-agent-stack.yml.j2"
+        src: "templates/portainer-agent-stack-{{ traefik_operation_mode }}.yml.j2"
         dest: "{{ traefik_perks_home }}/portainer/portainer-agent-stack.yml"
         owner: "{{ box_deploy_user }}"
       become: yes
@@ -61,7 +76,7 @@
         - traefikbox
 
     - name: TraefikBox | Activate portainer in local mode
-      shell: docker-compose -f portainer-agent-stack.yml up -d
+      shell: docker-compose -f portainer-agent-stack.yml up -d --remove-orphans
       args:
         chdir: "{{ traefik_perks_home }}/portainer/"
       when: traefik_operation_mode == "local"
