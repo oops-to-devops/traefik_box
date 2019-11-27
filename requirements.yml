@@ -1,0 +1,6 @@
+- src: softasap.sa-docker
+  name: sa_docker
+- src: softasap.sa-traefik
+  name: sa_traefik
+- src: softasap.sa-include
+  name: sa_include

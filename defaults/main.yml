@@ -1,0 +1,12 @@
+---
+
+box_deploy_user: "{{ ansible_user_id }}"
+
+traefik_perks_home: "/home/{{ box_deploy_user }}/perks"
+
+traefik_domain: traefik.local
+traefik_portainer_domain: portainer.traefik.local
+
+traefik_operation_mode: local # swarm
+
+option_traefik_perks_portainer: True

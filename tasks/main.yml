@@ -1,0 +1,4 @@
+---
+
+  - name: TraefikBox | setup application perks
+    include_tasks: tasks_traefik_perks.yml

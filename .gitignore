@@ -1,0 +1,8 @@
+*.retry
+.envrc
+.idea
+*/**/.terraform
+local_*.sh
+releases
+__pycache__
+*.pyc

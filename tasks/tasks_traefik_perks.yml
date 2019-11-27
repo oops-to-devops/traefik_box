@@ -1,0 +1,72 @@
+---
+
+  - name: TraefikBox | Create traefik network (swarm)
+    shell: docker network create --driver=overlay --attachable traefik-public
+    register: result
+    ignore_errors: true
+    become: yes
+    when: traefik_operation_mode == "swarm"
+    changed_when:
+      - '"network with name traefik-public already exists" in result.stderr'
+    tags:
+      - traefikbox
+
+  - name: TraefikBox | Create traefik network (local)
+    shell: docker network create --attachable traefik-public
+    register: result
+    ignore_errors: true
+    become: yes
+    when: traefik_operation_mode == "local"
+    changed_when:
+      - '"network with name traefik-public already exists" in result.stderr'
+    tags:
+      - traefikbox
+
+  - name: TraefikBox | Create perks folder
+    file:
+      path: "{{ traefik_perks_home }}"
+      state: directory
+      owner: "{{ box_deploy_user }}"
+    become: yes
+    tags:
+      - traefikbox
+
+  - block:
+
+    - name: TraefikBox | Create portainer docker-compose folder
+      file:
+        path: "{{ traefik_perks_home }}/portainer"
+        state: directory
+        owner: "{{ box_deploy_user }}"
+      become: yes
+      tags:
+        - traefikbox
+
+    - name: TraefikBox | Template portainer definition
+      template:
+        src: "templates/portainer-agent-stack.yml.j2"
+        dest: "{{ traefik_perks_home }}/portainer/portainer-agent-stack.yml"
+        owner: "{{ box_deploy_user }}"
+      become: yes
+      tags:
+        - traefikbox
+
+    - name: TraefikBox | Activate portainer in swarm mode
+      shell: docker stack deploy -c portainer-agent-stack.yml portainer
+      args:
+        chdir: "{{ traefik_perks_home }}/portainer/"
+      when: traefik_operation_mode == "swarm"
+      become: yes
+      tags:
+        - traefikbox
+
+    - name: TraefikBox | Activate portainer in local mode
+      shell: docker-compose -f portainer-agent-stack.yml up -d
+      args:
+        chdir: "{{ traefik_perks_home }}/portainer/"
+      when: traefik_operation_mode == "local"
+      become: yes
+      tags:
+        - traefikbox
+
+    when: option_traefik_perks_portainer

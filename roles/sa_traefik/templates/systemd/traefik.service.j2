@@ -1,0 +1,12 @@
+[Unit]
+Description=Traefik
+
+[Service]
+Type=notify
+WorkingDirectory={{traefik_install_dir}}
+ExecStart={{ traefik_bin_path | default('/opt/traefik/traefik') }} --configFile={{ traefik_config_file | default('/opt/traefik/traefik.toml') }}
+Restart=always
+WatchdogSec=1s
+
+[Install]
+WantedBy=multi-user.target

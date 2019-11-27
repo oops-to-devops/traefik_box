@@ -1,0 +1,34 @@
+---
+# defaults file for sa-traefik
+
+role_dir: "{{ role_path }}"
+
+# set it to false once directory syntax directory = "{{ traefik_install_dir }}/conf.d" starts to work
+option_confd_fallback: true
+
+traefik_install_dir: /opt/traefik
+traefik_version: "1.7.9"
+
+traefik_distribution_url: https://github.com/containous/traefik/releases/download/v{{traefik_version}}/traefik_linux-amd64
+traefik_bin_path: "{{ traefik_install_dir }}/traefik"
+
+traefik_acme_email: nobody@test.org
+
+option_traefik_swarm_mode: false
+option_traefik_conf_docker: true
+option_traefik_conf_defaultentrypoints: true
+option_traefik_conf_webbackend: true
+option_traefik_conf_webacme: true
+
+
+traefik_settings:
+  - {
+    name: "logLevel",
+    value: "DEBUG"
+    }
+  - {
+    name: "traefikLogsFile",
+    value: "/var/log/traefik.log"
+    }
+
+traefik_extra_settings: []
